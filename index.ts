@@ -1,6 +1,6 @@
 export * from './rust-module.js'
 
-export enum MouseButton {
+export enum Button {
   Left,
   Middle,
   Right,
@@ -8,6 +8,22 @@ export enum MouseButton {
   ScrollDown,
   ScrollLeft,
   ScrollRight,
+}
+
+export enum Direction {
+  Press,
+  Release,
+  Click,
+}
+
+export enum Coordinate {
+  Abs,
+  Rel,
+}
+
+export enum Axis {
+  Horizontal,
+  Vertical,
 }
 
 export enum Key {
