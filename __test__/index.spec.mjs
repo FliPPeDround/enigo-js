@@ -1,11 +1,11 @@
 import test from 'ava'
 
-import { sum, mouseClick } from '../index.js'
+import { mouseClick, sum } from '../index.js'
 
 test('sum from native', (t) => {
   t.is(sum(1, 2), 3)
 })
 
 test('click', () => {
-  mouseClick(200,100)
+  mouseClick(200, 100)
 })

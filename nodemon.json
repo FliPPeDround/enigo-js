@@ -1,0 +1,5 @@
+{
+  "watch": ["src/lib.rs"],
+  "ext": "less",
+  "exec": "pnpm build:debug"
+}
