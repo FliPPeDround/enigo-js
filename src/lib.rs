@@ -2,8 +2,8 @@
 
 use enigo::*;
 use napi::bindgen_prelude::Int32Array;
-mod mouse_button;
-pub use crate::mouse_button::*; 
+mod enum_mapping;
+pub use crate::enum_mapping::*; 
 
 #[macro_use]
 extern crate napi_derive;
@@ -22,38 +22,38 @@ impl EnigoJs {
     }
   }
 
-  #[napi]
-  /// Get the delay per keypress.
-  /// 
-  /// ### Example
-  /// ```js
-  /// import { Enigo } from '@enigo-js/core'
-  /// 
-  /// const enigo = new Enigo();
-  /// const delay = enigo.getDelay();
-  /// console.log(delay);
-  /// ```
-  /// 
-  /// @return {number} delay - The delay per keypress in milliseconds.
-  pub fn get_delay(&self) -> u32 {
-    self.enigo.delay()
-  }
+  // #[napi]
+  // /// Get the delay per keypress.
+  // /// 
+  // /// ### Example
+  // /// ```js
+  // /// import { Enigo } from '@enigo-js/core'
+  // /// 
+  // /// const enigo = new Enigo();
+  // /// const delay = enigo.getDelay();
+  // /// console.log(delay);
+  // /// ```
+  // /// 
+  // /// @return {number} delay - The delay per keypress in milliseconds.
+  // pub fn get_delay(&self) -> u32 {
+  //   self.enigo.delay()
+  // }
 
-  #[napi]
-  /// Set the delay per keypress.
-  /// 
-  /// ### Example
-  /// ```js
-  /// import { Enigo } from '@enigo-js/core'
-  /// 
-  /// const enigo = new Enigo();
-  /// enigo.setDelay(100);
-  /// ```
-  /// 
-  /// @param {number} delay - The delay per keypress in milliseconds.
-  pub fn set_delay(&mut self, delay: u32) {
-    self.enigo.set_delay(delay);
-  }
+  // #[napi]
+  // /// Set the delay per keypress.
+  // /// 
+  // /// ### Example
+  // /// ```js
+  // /// import { Enigo } from '@enigo-js/core'
+  // /// 
+  // /// const enigo = new Enigo();
+  // /// enigo.setDelay(100);
+  // /// ```
+  // /// 
+  // /// @param {number} delay - The delay per keypress in milliseconds.
+  // pub fn set_delay(&mut self, delay: u32) {
+  //   self.enigo.set_delay(delay);
+  // }
 
   // #[napi]
   // /// Returns a list of all currently pressed keys.
@@ -87,8 +87,8 @@ impl EnigoJs {
   /// 
   /// @param {Button} button - The button to press.
   /// @param {Direction} direction - The direction of the button press.
-  pub fn button(&mut self, button: i32, direction: i32) {
-    self.enigo.button(get_button(button), get_direction(direction)).unwrap();
+  pub fn button(&mut self, button: JsButton, direction: JsDirection) {
+    self.enigo.button(Button::from(button), Direction::from(direction)).unwrap();
   }
 
   #[napi]
@@ -105,8 +105,8 @@ impl EnigoJs {
   /// @param {number} x - The x coordinate.
   /// @param {number} y - The y coordinate.
   /// @param {Coordinate} coordinate - coordinate is relative or absolute
-  pub fn move_mouse(&mut self, x: i32, y: i32, coordinate: i32) {
-    self.enigo.move_mouse(x, y, get_coordinate(coordinate)).unwrap();
+  pub fn move_mouse(&mut self, x: i32, y: i32, coordinate: JsCoordinate) {
+    self.enigo.move_mouse(x, y, Coordinate::from(coordinate)).unwrap();
   }
 
   #[napi]
@@ -122,8 +122,8 @@ impl EnigoJs {
   /// 
   /// @param {number} length - The scroll length.
   /// @param {Axis} axis - The axis of the scroll.
-  pub fn scroll(&mut self, length: i32, axis: i32) {
-    self.enigo.scroll(length, get_axis(axis)).unwrap();
+  pub fn scroll(&mut self, length: i32, axis: JsAxis) {
+    self.enigo.scroll(length, Axis::from(axis)).unwrap();
   }
 
   #[napi]
@@ -161,6 +161,58 @@ impl EnigoJs {
   pub fn location(&self) -> Int32Array {
     let (x, y) = self.enigo.location().unwrap();
     Int32Array::new(vec![x, y])
+  }
+
+  #[napi]
+  /// Sends an individual key event.
+  /// It will enter the keysym (virtual key).
+  /// 
+  /// ### Example
+  /// ```js
+  /// import { Enigo, Key, Direction } from '@enigo-js/core'
+  /// 
+  /// const enigo = new Enigo();
+  /// enigo.key(Key.A, Direction.Press);
+  /// ```
+  /// 
+  /// @param {Key} key - The key to press.
+  /// @param {Direction} direction - The direction of the key press.
+  pub fn key(&mut self, key: JsKey, direction: JsDirection) {
+    self.enigo.key(Key::from(key), Direction::from(direction)).unwrap();
+  }
+
+  #[napi]
+  /// Sends a raw keycode.
+  /// The keycode may or may not be mapped on the current layout.
+  /// 
+  /// ### Example
+  /// ```js
+  /// import { Enigo, Direction } from '@enigo-js/core'
+  /// 
+  /// const enigo = new Enigo();
+  /// enigo.raw(13, Direction.Press);
+  /// ```
+  /// 
+  /// @param {number} keycode - The keycode to press.
+  /// @param {Direction} direction - The direction of the key press.
+  pub fn raw(&mut self, keycode: u16, direction: JsDirection) {
+    self.enigo.raw(keycode, Direction::from(direction)).unwrap();
+  }
+
+  #[napi]
+  /// Sends a key event for a single character.
+  /// 
+  /// ### Example
+  /// ```js
+  /// import { Enigo } from '@enigo-js/core'
+  /// 
+  /// const enigo = new Enigo();
+  /// enigo.text("Hello World!");
+  /// ```
+  /// 
+  /// @param {string} text - The text to type.
+  pub fn text(&mut self, text: String) {
+    self.enigo.text(&text).unwrap();
   }
 }
 

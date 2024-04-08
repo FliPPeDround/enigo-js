@@ -9,9 +9,9 @@
   },
   "scripts": {
     "artifacts": "napi artifacts",
-    "dev": "concurrently  \"nodemon\" \"tsc -w\"",
-    "build": "napi build --platform --release --js rust-module.js --dts rust-module.d.ts -c binaries.json",
-    "build:debug": "napi build --platform --js rust-module.js --dts rust-module.d.ts -c binaries.json",
+    "dev": "nodemon",
+    "build": "napi build --platform --release -c binaries.json",
+    "build:debug": "napi build --platform -c binaries.json",
     "prepublishOnly": "napi prepublish -t npm",
     "test": "ava",
     "universal": "napi universal",
