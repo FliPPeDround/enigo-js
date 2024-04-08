@@ -1,11 +1,12 @@
 import test from 'ava'
 
-import { mouseClick, sum } from '../index.js'
+import { Coordinate, Enigo } from '../index.js'
 
-test('sum from native', (t) => {
-  t.is(sum(1, 2), 3)
-})
+test('move and get position', (t) => {
+  const enigo = new Enigo()
+  enigo.moveMouse(100, 200, Coordinate.Abs)
+  const [x, y] = enigo.location()
 
-test('click', () => {
-  mouseClick(200, 100)
+  t.is(100, x)
+  t.is(200, y)
 })

@@ -1,5 +1,6 @@
 {
   "name": "playground",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "author": "",
@@ -7,7 +8,7 @@
   "keywords": [],
   "main": "index.js",
   "scripts": {
-    "dev": "node index.mjs"
+    "dev": "node index.js"
   },
   "dependencies": {
     "@enigo-js/core": "workspace:*"

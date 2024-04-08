@@ -1,9 +1,9 @@
 #![deny(clippy::all)]
 
 use enigo::*;
-use napi::bindgen_prelude::Int32Array;
+use napi::bindgen_prelude::{Int32Array, Uint16Array};
 mod enum_mapping;
-pub use crate::enum_mapping::*; 
+pub use crate::enum_mapping::*;
 
 #[macro_use]
 extern crate napi_derive;
@@ -34,7 +34,7 @@ impl EnigoJs {
   // /// console.log(delay);
   // /// ```
   // /// 
-  // /// @return {number} delay - The delay per keypress in milliseconds.
+  // /// @returns {number} delay - The delay per keypress in milliseconds.
   // pub fn get_delay(&self) -> u32 {
   //   self.enigo.delay()
   // }
@@ -55,23 +55,23 @@ impl EnigoJs {
   //   self.enigo.set_delay(delay);
   // }
 
-  // #[napi]
-  // /// Returns a list of all currently pressed keys.
-  // /// 
-  // /// ### Example
-  // /// ```js
-  // /// import { Enigo } from '@enigo-js/core'
-  // /// 
-  // /// const enigo = new Enigo();
-  // /// const keys = enigo.held();
-  // /// console.log(keys);
-  // /// ```
-  // /// 
-  // /// @return {Array<Key>} keys - The list of currently pressed keys.
-  // pub fn held(&self) -> Array {
-  //   let list = self.enigo.held();
-  //   Array::new(vec![list])
-  // }
+  #[napi]
+  /// Returns a list of all currently pressed keys.
+  /// 
+  /// ### Example
+  /// ```js
+  /// import { Enigo } from '@enigo-js/core'
+  /// 
+  /// const enigo = new Enigo();
+  /// const keys = enigo.held();
+  /// console.log(keys);
+  /// ```
+  /// 
+  /// @returns {Array<Key>} keys - The list of currently pressed keys.
+  pub fn held(&mut self) -> Uint16Array {
+    let (_keys, platform_keys) = self.enigo.held();
+    Uint16Array::new(platform_keys)
+  }
 
   #[napi]
   /// Sends an individual mouse button event. 
@@ -126,7 +126,7 @@ impl EnigoJs {
     self.enigo.scroll(length, Axis::from(axis)).unwrap();
   }
 
-  #[napi]
+  #[napi(ts_return_type="readonly [width: number, height: number]")]
   /// Get the [width, height] of the main display in pixels.
   /// This currently only works on the main display.
   /// 
@@ -139,13 +139,13 @@ impl EnigoJs {
   /// console.log(width, height);
   /// ```
   /// 
-  /// @return {[number, number]} size - The width and height of the main display in pixels.
+  /// @returns {[width: number, height: number]} size - The width and height of the main display in pixels.
   pub fn main_display(&self) -> Int32Array {
     let (width, height) = self.enigo.main_display().unwrap();
     Int32Array::new(vec![width, height])
   }
 
-  #[napi]
+  #[napi(ts_return_type="readonly [x: number, y: number]")]
   /// Get the location of the mouse in pixels
   /// 
   /// ### Example
@@ -157,7 +157,7 @@ impl EnigoJs {
   /// console.log(x, y);
   /// ```
   /// 
-  /// @return {[number, number]} location - The x and y coordinates of the mouse in pixels.
+  /// @returns {[x: number, y: number]} location - The x and y coordinates of the mouse in pixels.
   pub fn location(&self) -> Int32Array {
     let (x, y) = self.enigo.location().unwrap();
     Int32Array::new(vec![x, y])
